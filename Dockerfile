@@ -10,4 +10,4 @@ ENV PORT=8080
 
 # Run the handler with the Deno HTTP server
 # Use --allow-net only (and no persistent file writes)
-CMD ["deno", "run", "--allow-net", "server.ts"]
+CMD ["deno", "run", "--allow-net", "--allow-env", "server.ts"]
