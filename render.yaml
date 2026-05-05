@@ -1,10 +1,9 @@
 services:
   - type: web
-    name: exit-node
-    env: deno
-    plan: starter
-    buildCommand: ""
-    startCommand: "deno run --allow-net --allow-env server.ts"
+    name: mhrv-exit-node
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: PORT
-        from: env
+        value: "8080"
