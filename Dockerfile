@@ -1,13 +1,13 @@
-FROM denoland/deno:alpine-1.47.0
+FROM denoland/deno:latest
 
+# Create working directory
 WORKDIR /app
 
 # Copy source
 COPY . .
 
-# Allow the container to run the module on port 8080
-ENV PORT=8080
+# Install dependencies (use just `deno install` if deno.json has imports)
+RUN deno install --entrypoint main.ts
 
-# Run the handler with the Deno HTTP server
-# Use --allow-net only (and no persistent file writes)
-CMD ["run", "--allow-net", "--unstable", "--no-check", "server.ts"]
+# Run the app
+CMD ["deno", "run", "--allow-net", "main.ts"]
