@@ -95,6 +95,9 @@ export default async function (req: Request): Promise<Response> {
     );
   }
 
+  // Log request meta‑data – helps see where we’re looping
+  console.log("Incoming request:", req.method, req.url);
+
   try {
     if (req.method !== "POST") {
       return Response.json({ e: "method_not_allowed" }, { status: 405 });
@@ -124,10 +127,7 @@ export default async function (req: Request): Promise<Response> {
     try {
       const reqUrl = new URL(req.url);
       const dstUrl = new URL(u);
-      if (
-        reqUrl.host === dstUrl.host &&
-        reqUrl.protocol === dstUrl.protocol
-      ) {
+      if (reqUrl.host === dstUrl.host && reqUrl.protocol === dstUrl.protocol) {
         return Response.json({ e: "exit-node loop refused" }, { status: 400 });
       }
     } catch {
@@ -138,6 +138,9 @@ export default async function (req: Request): Promise<Response> {
     if (typeof b64 === "string" && b64.length > 0) {
       payload = decodeBase64ToBytes(b64);
     }
+
+    console.log("Preparing to forward to", u, "using method", m);
+    if (payload) console.log("Body size:", payload.length);
 
     const resp = await fetch(u, {
       method: m,
@@ -159,6 +162,7 @@ export default async function (req: Request): Promise<Response> {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
+    console.error("Exit node threw:", message); // <-- this will appear in Render logs
     return Response.json({ e: message }, { status: 500 });
   }
 }
